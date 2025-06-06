@@ -1022,15 +1022,33 @@
         border-radius: 3px;
     }
 </style>
-
+<!-- Добавьте перед закрывающим тегом </body> -->
 <div class="cat-game-button" id="catGameButton">
-    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Кот" width="40">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Кот" width="40" style="filter: grayscale(100%)">
 </div>
 
 <div class="game-modal" id="gameModal">
     <div class="game-container">
         <span class="close-game" onclick="closeGame()">&times;</span>
-        <div class="game-wrapper">
+        <div class="games-menu">
+            <h2>Мини-игры</h2>
+            <div class="game-options">
+                <div class="game-option" onclick="startGame('cloud')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png" alt="Прыжки по облакам">
+                    <h3>Прыжки по облакам</h3>
+                </div>
+                <div class="game-option" onclick="startGame('tetris')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2821/2821797.png" alt="Тетрис">
+                    <h3>Тетрис</h3>
+                </div>
+                <div class="game-option" onclick="startGame('tanks')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3473/3473619.png" alt="Танчики">
+                    <h3>Танчики</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-wrapper" id="gameWrapper" style="display: none;">
             <canvas id="gameCanvas" width="600" height="300"></canvas>
             <div class="game-controls">
                 <button id="jumpBtn">Прыжок (Пробел)</button>
@@ -1076,12 +1094,12 @@
     }
     
     .game-container {
-        background: #000000;
+        background: #000;
         padding: 20px;
         border-radius: 10px;
         position: relative;
-        max-width: 90%;
-        max-height: 90%;
+        width: 80%;
+        max-width: 800px;
     }
     
     .close-game {
@@ -1093,6 +1111,48 @@
         cursor: pointer;
     }
     
+    .games-menu {
+        text-align: center;
+        color: white;
+    }
+    
+    .games-menu h2 {
+        margin-bottom: 20px;
+    }
+    
+    .game-options {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .game-option {
+        cursor: pointer;
+        background: #333;
+        padding: 15px;
+        border-radius: 10px;
+        transition: transform 0.3s;
+        width: 200px;
+    }
+    
+    .game-option:hover {
+        transform: scale(1.05);
+        background: #444;
+    }
+    
+    .game-option img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        margin-bottom: 10px;
+    }
+    
+    .game-option h3 {
+        margin: 0;
+        color: white;
+    }
+    
     .game-wrapper {
         position: relative;
     }
@@ -1102,6 +1162,7 @@
         border: 2px solid #fff;
         display: block;
         margin: 0 auto;
+        width: 100%;
     }
     
     .game-controls {
@@ -1110,6 +1171,7 @@
         align-items: center;
         margin-top: 10px;
         padding: 0 10px;
+        color: white;
     }
     
     #jumpBtn {
@@ -1122,27 +1184,37 @@
     }
     
     .score {
-        color: #333;
+        color: white;
         font-weight: bold;
     }
 </style>
 
 <script>
-    // Игра с прыгающим мальчиком
+    // Игровое меню
     const catGameButton = document.getElementById('catGameButton');
     const gameModal = document.getElementById('gameModal');
     const closeGameBtn = document.querySelector('.close-game');
+    const gamesMenu = document.querySelector('.games-menu');
+    const gameWrapper = document.getElementById('gameWrapper');
+    let currentGame = null;
     
-    // Открытие игры
+    // Открытие игрового меню
     catGameButton.addEventListener('click', function() {
         gameModal.style.display = 'flex';
-        initGame();
+        gamesMenu.style.display = 'block';
+        gameWrapper.style.display = 'none';
     });
     
     // Закрытие игры
     function closeGame() {
         gameModal.style.display = 'none';
-        cancelAnimationFrame(animationId);
+        if (currentGame === 'cloud') {
+            cancelAnimationFrame(cloudAnimationId);
+        } else if (currentGame === 'tetris') {
+            // Остановить игру в тетрис
+        } else if (currentGame === 'tanks') {
+            // Остановить игру в танчики
+        }
     }
     
     // Закрытие при клике вне области игры
@@ -1152,14 +1224,54 @@
         }
     });
     
-    // Инициализация игры
-    let canvas, ctx, boy, clouds, obstacles, score, gravity, animationId;
-    let isJumping = false;
-    let gameSpeed = 2;
+    // Запуск выбранной игры
+    function startGame(gameType) {
+        currentGame = gameType;
+        gamesMenu.style.display = 'none';
+        gameWrapper.style.display = 'block';
+        
+        if (gameType === 'cloud') {
+            initCloudGame();
+        } else if (gameType === 'tetris') {
+            alert('Тетрис скоро будет доступен!');
+            // initTetrisGame();
+        } else if (gameType === 'tanks') {
+            alert('Танчики скоро будут доступны!');
+            // initTanksGame();
+        }
+    }
     
-    function initGame() {
+    // Вернуться в меню игр
+    function backToMenu() {
+        gamesMenu.style.display = 'block';
+        gameWrapper.style.display = 'none';
+        if (currentGame === 'cloud') {
+            cancelAnimationFrame(cloudAnimationId);
+        }
+        currentGame = null;
+    }
+    
+    // Добавьте кнопку "Назад" в game-controls
+    const gameControls = document.querySelector('.game-controls');
+    const backBtn = document.createElement('button');
+    backBtn.textContent = 'Назад';
+    backBtn.onclick = backToMenu;
+    backBtn.style.marginRight = '10px';
+    gameControls.insertBefore(backBtn, gameControls.firstChild);
+
+    // Игра "Прыжки по облакам"
+    let canvas, ctx, boy, clouds, obstacles, score, gravity, cloudAnimationId;
+    let isJumping = false;
+    let baseGameSpeed = 2; // Начальная скорость (медленная)
+    let currentSpeed = baseGameSpeed;
+    
+    function initCloudGame() {
         canvas = document.getElementById('gameCanvas');
         ctx = canvas.getContext('2d');
+        
+        // Установим размеры canvas в зависимости от ширины контейнера
+        canvas.width = document.querySelector('.game-container').clientWidth - 40;
+        canvas.height = 300;
         
         // Игровые объекты
         boy = {
@@ -1176,6 +1288,8 @@
         clouds = [];
         obstacles = [];
         score = 0;
+        currentSpeed = baseGameSpeed;
+        document.getElementById('score').textContent = '0';
         
         // Создаем начальные облака
         for (let i = 0; i < 5; i++) {
@@ -1193,7 +1307,7 @@
         document.getElementById('jumpBtn').addEventListener('click', jump);
         
         // Запуск игрового цикла
-        animationId = requestAnimationFrame(gameLoop);
+        cloudAnimationId = requestAnimationFrame(cloudGameLoop);
     }
     
     function jump(e) {
@@ -1207,7 +1321,7 @@
         }
     }
     
-    function gameLoop() {
+    function cloudGameLoop() {
         // Очистка холста
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
@@ -1240,7 +1354,7 @@
                 y: canvas.height - 40,
                 width: 30,
                 height: 40,
-                speed: gameSpeed + Math.random() * 2
+                speed: currentSpeed + Math.random() * 2
             });
         }
         
@@ -1255,7 +1369,7 @@
                 boy.y + boy.height > obstacles[i].y) {
                 // Конец игры
                 alert('Игра окончена! Ваш счет: ' + score);
-                closeGame();
+                backToMenu();
                 return;
             }
             
@@ -1266,9 +1380,9 @@
                 score++;
                 document.getElementById('score').textContent = score;
                 
-                // Увеличиваем сложность
+                // Увеличиваем скорость каждые 5 очков
                 if (score % 5 === 0) {
-                    gameSpeed += 0.5;
+                    currentSpeed += 0.5;
                 }
             }
         }
@@ -1279,7 +1393,7 @@
         drawObstacles();
         
         // Продолжаем игровой цикл
-        animationId = requestAnimationFrame(gameLoop);
+        cloudAnimationId = requestAnimationFrame(cloudGameLoop);
     }
     
     function drawBoy() {
