@@ -1022,4 +1022,316 @@
         border-radius: 3px;
     }
 </style>
+<!-- Добавьте перед закрывающим тегом </body> -->
+<div class="cat-game-button" id="catGameButton">
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Кот" width="40">
+</div>
+
+<div class="game-modal" id="gameModal">
+    <div class="game-container">
+        <span class="close-game" onclick="closeGame()">&times;</span>
+        <div class="game-wrapper">
+            <canvas id="gameCanvas" width="600" height="300"></canvas>
+            <div class="game-controls">
+                <button id="jumpBtn">Прыжок (Пробел)</button>
+                <div class="score">Счет: <span id="score">0</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cat-game-button {
+        position: fixed;
+        left: 15px;
+        bottom: 15px;
+        cursor: pointer;
+        z-index: 1000;
+        background: rgba(255,255,255,0.8);
+        padding: 5px;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    
+    .cat-game-button:hover {
+        transform: scale(1.1);
+    }
+    
+    .cat-game-button img {
+        display: block;
+    }
+    
+    .game-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .game-container {
+        background: #87CEEB;
+        padding: 20px;
+        border-radius: 10px;
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+    }
+    
+    .close-game {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        color: #fff;
+        cursor: pointer;
+    }
+    
+    .game-wrapper {
+        position: relative;
+    }
+    
+    #gameCanvas {
+        background: #87CEEB;
+        border: 2px solid #fff;
+        display: block;
+        margin: 0 auto;
+    }
+    
+    .game-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        padding: 0 10px;
+    }
+    
+    #jumpBtn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .score {
+        color: #333;
+        font-weight: bold;
+    }
+</style>
+
+<script>
+    // Игра с прыгающим мальчиком
+    const catGameButton = document.getElementById('catGameButton');
+    const gameModal = document.getElementById('gameModal');
+    const closeGameBtn = document.querySelector('.close-game');
+    
+    // Открытие игры
+    catGameButton.addEventListener('click', function() {
+        gameModal.style.display = 'flex';
+        initGame();
+    });
+    
+    // Закрытие игры
+    function closeGame() {
+        gameModal.style.display = 'none';
+        cancelAnimationFrame(animationId);
+    }
+    
+    // Закрытие при клике вне области игры
+    gameModal.addEventListener('click', function(e) {
+        if (e.target === gameModal) {
+            closeGame();
+        }
+    });
+    
+    // Инициализация игры
+    let canvas, ctx, boy, clouds, obstacles, score, gravity, animationId;
+    let isJumping = false;
+    let gameSpeed = 5;
+    
+    function initGame() {
+        canvas = document.getElementById('gameCanvas');
+        ctx = canvas.getContext('2d');
+        
+        // Игровые объекты
+        boy = {
+            x: 50,
+            y: canvas.height - 60,
+            width: 40,
+            height: 60,
+            dy: 0,
+            jumpForce: -15,
+            gravity: 0.8,
+            color: '#3498db'
+        };
+        
+        clouds = [];
+        obstacles = [];
+        score = 0;
+        
+        // Создаем начальные облака
+        for (let i = 0; i < 5; i++) {
+            clouds.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * (canvas.height - 100),
+                width: 80 + Math.random() * 50,
+                height: 30,
+                speed: 1 + Math.random() * 2
+            });
+        }
+        
+        // Обработчики управления
+        document.addEventListener('keydown', jump);
+        document.getElementById('jumpBtn').addEventListener('click', jump);
+        
+        // Запуск игрового цикла
+        animationId = requestAnimationFrame(gameLoop);
+    }
+    
+    function jump(e) {
+        // Прыжок только если не в прыжке и нажата пробел или кнопка
+        if ((e.type === 'keydown' && e.code === 'Space') || e.type === 'click') {
+            if (!isJumping) {
+                boy.dy = boy.jumpForce;
+                isJumping = true;
+            }
+            e.preventDefault();
+        }
+    }
+    
+    function gameLoop() {
+        // Очистка холста
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Обновление позиции мальчика
+        boy.dy += boy.gravity;
+        boy.y += boy.dy;
+        
+        // Проверка на землю
+        if (boy.y > canvas.height - boy.height) {
+            boy.y = canvas.height - boy.height;
+            boy.dy = 0;
+            isJumping = false;
+        }
+        
+        // Обновление облаков
+        for (let i = 0; i < clouds.length; i++) {
+            clouds[i].x -= clouds[i].speed;
+            
+            // Если облако ушло за экран, перемещаем его вправо
+            if (clouds[i].x + clouds[i].width < 0) {
+                clouds[i].x = canvas.width;
+                clouds[i].y = Math.random() * (canvas.height - 100);
+            }
+        }
+        
+        // Генерация препятствий
+        if (Math.random() < 0.01) {
+            obstacles.push({
+                x: canvas.width,
+                y: canvas.height - 40,
+                width: 30,
+                height: 40,
+                speed: gameSpeed + Math.random() * 2
+            });
+        }
+        
+        // Обновление препятствий
+        for (let i = 0; i < obstacles.length; i++) {
+            obstacles[i].x -= obstacles[i].speed;
+            
+            // Проверка столкновений
+            if (boy.x < obstacles[i].x + obstacles[i].width &&
+                boy.x + boy.width > obstacles[i].x &&
+                boy.y < obstacles[i].y + obstacles[i].height &&
+                boy.y + boy.height > obstacles[i].y) {
+                // Конец игры
+                alert('Игра окончена! Ваш счет: ' + score);
+                closeGame();
+                return;
+            }
+            
+            // Удаление препятствий за экраном
+            if (obstacles[i].x + obstacles[i].width < 0) {
+                obstacles.splice(i, 1);
+                i--;
+                score++;
+                document.getElementById('score').textContent = score;
+                
+                // Увеличиваем сложность
+                if (score % 5 === 0) {
+                    gameSpeed += 0.5;
+                }
+            }
+        }
+        
+        // Отрисовка
+        drawBoy();
+        drawClouds();
+        drawObstacles();
+        
+        // Продолжаем игровой цикл
+        animationId = requestAnimationFrame(gameLoop);
+    }
+    
+    function drawBoy() {
+        // Тело
+        ctx.fillStyle = boy.color;
+        ctx.fillRect(boy.x, boy.y, boy.width, boy.height);
+        
+        // Голова
+        ctx.beginPath();
+        ctx.arc(boy.x + boy.width/2, boy.y - 15, 15, 0, Math.PI * 2);
+        ctx.fillStyle = '#f1c40f';
+        ctx.fill();
+        
+        // Глаза
+        ctx.beginPath();
+        ctx.arc(boy.x + boy.width/2 - 5, boy.y - 20, 3, 0, Math.PI * 2);
+        ctx.arc(boy.x + boy.width/2 + 5, boy.y - 20, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#000';
+        ctx.fill();
+        
+        // Улыбка
+        ctx.beginPath();
+        ctx.arc(boy.x + boy.width/2, boy.y - 15, 8, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    
+    function drawClouds() {
+        ctx.fillStyle = '#fff';
+        for (let i = 0; i < clouds.length; i++) {
+            // Основная часть облака
+            ctx.beginPath();
+            ctx.arc(clouds[i].x + clouds[i].width/4, clouds[i].y + clouds[i].height/2, clouds[i].height/2, 0, Math.PI * 2);
+            ctx.arc(clouds[i].x + clouds[i].width/2, clouds[i].y + clouds[i].height/4, clouds[i].height/2, 0, Math.PI * 2);
+            ctx.arc(clouds[i].x + 3*clouds[i].width/4, clouds[i].y + clouds[i].height/2, clouds[i].height/2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+    
+    function drawObstacles() {
+        ctx.fillStyle = '#e74c3c';
+        for (let i = 0; i < obstacles.length; i++) {
+            // Основание
+            ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
+            
+            // Верхняя часть
+            ctx.beginPath();
+            ctx.arc(obstacles[i].x + obstacles[i].width/2, obstacles[i].y, obstacles[i].width/2, 0, Math.PI);
+            ctx.fill();
+        }
+    }
+</script>
+
 </html>
