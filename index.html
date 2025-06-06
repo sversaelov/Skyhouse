@@ -1022,7 +1022,7 @@
         border-radius: 3px;
     }
 </style>
-<!-- Добавьте перед закрывающим тегом </body> -->
+
 <div class="cat-game-button" id="catGameButton">
     <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Кот" width="40">
 </div>
@@ -1076,7 +1076,7 @@
     }
     
     .game-container {
-        background: #87CEEB;
+        background: #000000;
         padding: 20px;
         border-radius: 10px;
         position: relative;
@@ -1098,7 +1098,7 @@
     }
     
     #gameCanvas {
-        background: #87CEEB;
+        background: #53c2ee;
         border: 2px solid #fff;
         display: block;
         margin: 0 auto;
@@ -1155,7 +1155,7 @@
     // Инициализация игры
     let canvas, ctx, boy, clouds, obstacles, score, gravity, animationId;
     let isJumping = false;
-    let gameSpeed = 5;
+    let gameSpeed = 2;
     
     function initGame() {
         canvas = document.getElementById('gameCanvas');
