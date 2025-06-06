@@ -1817,3 +1817,117 @@ button:hover {
         max-height: calc(70vh - 120px);
     }
 }
+/* Мобильная адаптация шапки */
+@media (max-width: 768px) {
+    header {
+        padding: 15px 0;
+        position: relative;
+    }
+    
+    header .container {
+        flex-direction: column;
+        align-items: stretch;
+        width: 95%;
+    }
+    
+    .logo {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .logo a {
+        font-size: 22px;
+    }
+    
+    /* Навигация */
+    nav {
+        order: 3; /* Перемещаем навигацию вниз */
+        width: 100%;
+        margin-top: 15px;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    nav ul li {
+        width: 100%;
+        text-align: center;
+        margin: 5px 0;
+    }
+    
+    nav ul li a {
+        padding: 10px;
+        display: block;
+        font-size: 15px;
+    }
+    
+    /* Правая часть шапки */
+    .header-right {
+        flex-direction: column;
+        order: 2;
+        margin-top: 15px;
+    }
+    
+    .auth {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 15px;
+    }
+    
+    .auth a {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .search {
+        width: 100%;
+        margin: 0 0 15px 0;
+        order: 1;
+    }
+    
+    .search input {
+        width: 75%;
+        padding: 10px;
+    }
+    
+    .search button {
+        width: 25%;
+        padding: 10px;
+    }
+    
+    .cart-icon {
+        margin: 10px auto 0;
+        order: 2;
+    }
+}
+
+/* Адаптация для очень маленьких экранов */
+@media (max-width: 480px) {
+    .logo a {
+        font-size: 20px;
+    }
+    
+    nav ul li a {
+        font-size: 14px;
+        padding: 8px;
+    }
+    
+    .auth {
+        flex-direction: column;
+    }
+    
+    .auth a {
+        text-align: center;
+        margin: 5px 0;
+    }
+    
+    .search input {
+        width: 70%;
+    }
+    
+    .search button {
+        width: 30%;
+    }
+}
