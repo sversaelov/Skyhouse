@@ -949,5 +949,60 @@
         }
     });
 </script>
+<script>
+    // Исправленные функции для закрытия модальных окон
+    function closeLoginModal() {
+        document.getElementById("loginModal").style.display = "none";
+    }
+
+    function closeRegisterModal() {
+        document.getElementById("registerModal").style.display = "none";
+    }
+
+    function closeCartModal() {
+        document.getElementById("cartModal").style.display = "none";
+        // Сбрасываем состояние оплаты при закрытии корзины
+        document.getElementById('payment-success').style.display = 'none';
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.querySelectorAll('.payment-form').forEach(form => {
+            form.classList.remove('active');
+        });
+        document.getElementById('payment-methods').style.display = 'none';
+        document.getElementById('checkout-btn').style.display = 'block';
+    }
+
+    function closePrivacyModal() {
+        document.getElementById("privacyModal").style.display = "none";
+    }
+
+    // Закрытие модального окна при клике вне его области
+    window.onclick = function(event) {
+        if (event.target == document.getElementById("loginModal")) {
+            closeLoginModal();
+        }
+        if (event.target == document.getElementById("registerModal")) {
+            closeRegisterModal();
+        }
+        if (event.target == document.getElementById("cartModal")) {
+            closeCartModal();
+        }
+        if (event.target == document.getElementById("privacyModal")) {
+            closePrivacyModal();
+        }
+    }
+    
+    // Закрытие модального окна при нажатии Esc
+    document.onkeydown = function(event) {
+        if (event.key === "Escape") {
+            closeLoginModal();
+            closeRegisterModal();
+            closeCartModal();
+            closePrivacyModal();
+        }
+    };
+</script>
+
 </body>
 </html>
