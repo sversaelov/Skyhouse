@@ -1628,108 +1628,192 @@ button:hover {
             color: #ccc;
         }
         
-        /* Стили для выпадающего меню каталога */
-        .catalog-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: none;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            border-top: 2px solid #000;
-        }
-        
-        .catalog-dropdown.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .catalog-columns {
-            display: flex;
-            padding: 20px;
-            background-color: #fff;
-        }
-        
-        .catalog-column {
-            flex: 1;
-            padding: 0 15px;
-        }
-        
-        .catalog-title {
-            color: #000;
-            font-size: 16px;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .catalog-list {
-            list-style: none;
-        }
-        
-        .catalog-list li {
-            margin-bottom: 10px;
-        }
-        
-        .catalog-list a {
-            color: #333;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: block;
-            padding: 5px 0;
-        }
-        
-        .catalog-list a:hover {
-            color: #000;
-            font-weight: 500;
-        }
-        
-        .catalog-banner {
-            position: relative;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-        
-        .catalog-banner img {
-            width: 100%;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-        
-        .catalog-banner:hover img {
-            transform: scale(1.02);
-        }
-        
-        .banner-text {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            color: #fff;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            font-weight: bold;
-        }
-        
-        /* Адаптация для мобильных устройств */
-        @media (max-width: 768px) {
-            .catalog-columns {
-                flex-direction: column;
-            }
-            
-            .catalog-column {
-                margin-bottom: 20px;
-            }
-            
-            .catalog-dropdown {
-                position: static;
-                box-shadow: none;
-                transform: none;
-                border-top: none;
-            }
-        }
+        /* Мобильная адаптация */
+@media (max-width: 768px) {
+    /* Шапка */
+    header .container {
+        flex-direction: column;
+        padding: 15px;
+    }
+    
+    .logo {
+        margin-bottom: 15px;
+        text-align: center;
+        width: 100%;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    nav ul li {
+        margin: 5px 0;
+        text-align: center;
+    }
+    
+    .header-right {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 15px;
+    }
+    
+    .auth {
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    
+    .search {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .search input {
+        width: 70%;
+    }
+    
+    .search button {
+        width: 30%;
+    }
+    
+    .cart-icon {
+        margin: 15px auto 0;
+    }
+    
+    /* Категории */
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* О нас */
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .about-text, .about-image {
+        width: 100%;
+    }
+    
+    .about-image {
+        margin-top: 20px;
+    }
+    
+    /* Преимущества */
+    .advantage-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Форма обратной связи */
+    .contact-form {
+        padding: 15px;
+        margin: 15px;
+    }
+    
+    /* Подвал */
+    footer .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    footer .footer-info,
+    footer .footer-links,
+    footer .social-icons {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    
+    footer .footer-links {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    footer .social-icons {
+        justify-content: center;
+    }
+    
+    /* Модальные окна */
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    /* Корзина */
+    .payment-options {
+        flex-direction: column;
+    }
+    
+    .payment-option {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    /* Чат */
+    .chat-form {
+        width: 90%;
+        right: 5%;
+        bottom: 70px;
+    }
+    
+    .chat-toggle {
+        right: 10px;
+        bottom: 10px;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    /* Кнопка наверх */
+    .scroll-to-top {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        bottom: 60px;
+        right: 10px;
+    }
+}
+
+/* Адаптация для очень маленьких экранов */
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
+    
+    .modal-content {
+        padding: 15px;
+    }
+    
+    .payment-form-row {
+        flex-direction: column;
+    }
+    
+    .category-item {
+        margin-bottom: 20px;
+    }
+    
+    .chat-body {
+        max-height: 200px;
+    }
+    
+    .message-input {
+        font-size: 14px;
+    }
+}
+
+/* Горизонтальная ориентация на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+    .modal-content {
+        margin: 2% auto;
+        max-height: 90vh;
+    }
+    
+    .chat-form {
+        height: 70vh;
+    }
+    
+    .chat-body {
+        max-height: calc(70vh - 120px);
+    }
+}
