@@ -720,7 +720,7 @@
     <div class="chat-form" id="chatForm">
         <div class="chat-header">
             <div class="operator-info">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Оператор" class="operator-avatar">
+                <img src="images/operator.jpg" alt="Оператор" class="operator-avatar">
                 <span>Поддержка (Елена)</span>
             </div>
             <button class="close-btn" id="closeChat">×</button>
@@ -1023,7 +1023,7 @@
     }
 </style>
 <!-- Добавьте перед закрывающим тегом </body> -->
-<div class="cat-game-button" id="catGameButton">
+<div class="cat-game-button" id="caameButton">
     <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Кот" width="40" style="filter: grayscale(100%)">
 </div>
 
@@ -1033,15 +1033,15 @@
         <div class="games-menu">
             <h2>Мини-игры</h2>
             <div class="game-options">
-                <div class="game-option" onclick="startGame('cloud')">
+                <div class="game-option" onclick="starame('cloud')">
                     <img src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png" alt="Прыжки по облакам">
                     <h3>Прыжки по облакам</h3>
                 </div>
-                <div class="game-option" onclick="startGame('tetris')">
+                <div class="game-option" onclick="starame('tetris')">
                     <img src="https://cdn-icons-png.flaticon.com/512/2821/2821797.png" alt="Тетрис">
                     <h3>Тетрис</h3>
                 </div>
-                <div class="game-option" onclick="startGame('tanks')">
+                <div class="game-option" onclick="starame('tanks')">
                     <img src="https://cdn-icons-png.flaticon.com/512/3473/3473619.png" alt="Танчики">
                     <h3>Танчики</h3>
                 </div>
@@ -1191,15 +1191,15 @@
 
 <script>
     // Игровое меню
-    const catGameButton = document.getElementById('catGameButton');
+    const caameButton = document.getElementById('caameButton');
     const gameModal = document.getElementById('gameModal');
     const closeGameBtn = document.querySelector('.close-game');
     const gamesMenu = document.querySelector('.games-menu');
     const gameWrapper = document.getElementById('gameWrapper');
-    let currentGame = null;
+    let currename = null;
     
     // Открытие игрового меню
-    catGameButton.addEventListener('click', function() {
+    caameButton.addEventListener('click', function() {
         gameModal.style.display = 'flex';
         gamesMenu.style.display = 'block';
         gameWrapper.style.display = 'none';
@@ -1208,11 +1208,11 @@
     // Закрытие игры
     function closeGame() {
         gameModal.style.display = 'none';
-        if (currentGame === 'cloud') {
+        if (currename === 'cloud') {
             cancelAnimationFrame(cloudAnimationId);
-        } else if (currentGame === 'tetris') {
+        } else if (currename === 'tetris') {
             // Остановить игру в тетрис
-        } else if (currentGame === 'tanks') {
+        } else if (currename === 'tanks') {
             // Остановить игру в танчики
         }
     }
@@ -1225,8 +1225,8 @@
     });
     
     // Запуск выбранной игры
-    function startGame(gameType) {
-        currentGame = gameType;
+    function starame(gameType) {
+        currename = gameType;
         gamesMenu.style.display = 'none';
         gameWrapper.style.display = 'block';
         
@@ -1245,10 +1245,10 @@
     function backToMenu() {
         gamesMenu.style.display = 'block';
         gameWrapper.style.display = 'none';
-        if (currentGame === 'cloud') {
+        if (currename === 'cloud') {
             cancelAnimationFrame(cloudAnimationId);
         }
-        currentGame = null;
+        currename = null;
     }
     
     // Добавьте кнопку "Назад" в game-controls
@@ -1447,5 +1447,322 @@
         }
     }
 </script>
-
+<script>
+    // ========== ТЕТРИС ==========
+    const COLS = 5;
+    const ROWS = 5;
+    const BLOCK_SIZE = 20; // Восстановил нормальный размер блока
+    const COLORS = [
+        '#00FFFF', '#0000FF', '#FFA500', '#FFFF00', '#00FF00', '#800080', '#FF0000'
+    ];
+    
+    // Уменьшенные фигуры тетриса (2x2 и 3x3 вместо 4x4)
+    const SHAPES = [
+        [[1, 1, 1]],                          // I (теперь 1x3)
+        [[2, 0], [2, 2]],                     // J (2x2)
+        [[0, 3], [3, 3]],                     // L (2x2)
+        [[4, 4], [4, 4]],                     // O (2x2)
+        [[0, 5, 5], [5, 5, 0]],               // S (2x3)
+        [[0, 6, 0], [6, 6, 6]],               // T (2x3)
+        [[7, 7, 0], [0, 7, 7]]                // Z (2x3)
+    ];
+    
+    let tetrisCanvas, tetrisCtx;
+    let board = [];
+    let currentPiece, nextPiece;
+    let sscore = 0;
+    let level = 1;
+    let lines = 0;
+    let gameOver = false;
+    let dropStart;
+    let tetrisAnimationId;
+    let gameInterval;
+    
+    function initTetrisGame() {
+        tetrisCanvas = document.getElementById('gameCanvas');
+        tetrisCtx = tetrisCanvas.getContext('2d');
+        
+        // Установка размера canvas
+        tetrisCanvas.width = COLS * BLOCK_SIZE;
+        tetrisCanvas.height = ROWS * BLOCK_SIZE;
+        
+        // Инициализация игрового поля
+        initBoard();
+        
+        // Создание первой фигуры
+        currentPiece = randomPiece();
+        nextPiece = randomPiece();
+        
+        // Сброс счетчиков
+        sscore = 0;
+        level = 1;
+        lines = 0;
+        gameOver = false;
+        document.getElementById('score').textContent = '0';
+        
+        // Запуск игрового цикла
+        dropStart = Date.now();
+        gameInterval = setInterval(moveDown, 1000);
+        
+        // Обработчики управления
+        document.addEventListener('keydown', control);
+        
+        // Первая отрисовка
+        draw();
+    }
+    
+    function initBoard() {
+        board = [];
+        for (let r = 0; r < ROWS; r++) {
+            board[r] = [];
+            for (let c = 0; c < COLS; c++) {
+                board[r][c] = 0;
+            }
+        }
+    }
+    
+    function randomPiece() {
+        const randomIndex = Math.floor(Math.random() * SHAPES.length);
+        const shape = SHAPES[randomIndex];
+        const color = COLORS[randomIndex];
+        
+        // Центрирование фигуры с учетом ее размера
+        const piece = {
+            shape: shape,
+            color: color,
+            x: Math.max(0, Math.floor(COLS / 2) - Math.floor(shape[0].length / 2)),
+            y: 0
+        };
+        
+        return piece;
+    }
+    
+    function drawBlock(x, y, color) {
+        tetrisCtx.fillStyle = color;
+        tetrisCtx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        
+        tetrisCtx.strokeStyle = '#000';
+        tetrisCtx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+    }
+    
+    function drawBoard() {
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                if (board[r][c]) {
+                    drawBlock(c, r, COLORS[board[r][c] - 1]);
+                }
+            }
+        }
+    }
+    
+    function drawPiece() {
+        for (let r = 0; r < currentPiece.shape.length; r++) {
+            for (let c = 0; c < currentPiece.shape[r].length; c++) {
+                if (currentPiece.shape[r][c]) {
+                    drawBlock(currentPiece.x + c, currentPiece.y + r, currentPiece.color);
+                }
+            }
+        }
+    }
+    
+    function draw() {
+        tetrisCtx.clearRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+        drawBoard();
+        drawPiece();
+    }
+    
+    function control(e) {
+        if (gameOver) return;
+        
+        switch(e.keyCode) {
+            case 37: // LEFT
+                if (!collision(-1, 0, currentPiece.shape)) {
+                    currentPiece.x--;
+                    draw();
+                }
+                break;
+            case 38: // UP
+                const rotated = rotate(currentPiece.shape);
+                if (!collision(0, 0, rotated)) {
+                    currentPiece.shape = rotated;
+                    draw();
+                }
+                break;
+            case 39: // RIGHT
+                if (!collision(1, 0, currentPiece.shape)) {
+                    currentPiece.x++;
+                    draw();
+                }
+                break;
+            case 40: // DOWN
+                if (!collision(0, 1, currentPiece.shape)) {
+                    currentPiece.y++;
+                    draw();
+                }
+                break;
+            case 32: // SPACE
+                while (!collision(0, 1, currentPiece.shape)) {
+                    currentPiece.y++;
+                }
+                draw();
+                lock();
+                break;
+        }
+    }
+    
+    function rotate(shape) {
+        const N = shape.length;
+        const rotated = [];
+        
+        for (let i = 0; i < N; i++) {
+            rotated[i] = [];
+            for (let j = 0; j < N; j++) {
+                rotated[i][j] = shape[N - j - 1][i];
+            }
+        }
+        
+        return rotated;
+    }
+    
+    function collision(offsetX, offsetY, piece) {
+        for (let r = 0; r < piece.length; r++) {
+            for (let c = 0; c < piece[r].length; c++) {
+                if (!piece[r][c]) continue;
+                
+                const newX = currentPiece.x + c + offsetX;
+                const newY = currentPiece.y + r + offsetY;
+                
+                if (newX < 0 || newX >= COLS || newY >= ROWS) {
+                    return true;
+                }
+                
+                if (newY < 0) continue;
+                
+                if (board[newY][newX]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    function lock() {
+        for (let r = 0; r < currentPiece.shape.length; r++) {
+            for (let c = 0; c < currentPiece.shape[r].length; c++) {
+                if (!currentPiece.shape[r][c]) continue;
+                
+                if (currentPiece.y + r < 0) {
+                    gameOver = true;
+                    alert('Игра окончена! Ваш счет: ' + sscore);
+                    clearInterval(gameInterval);
+                    backToMenu();
+                    return;
+                }
+                
+                board[currentPiece.y + r][currentPiece.x + c] = 
+                    COLORS.indexOf(currentPiece.color) + 1;
+            }
+        }
+        
+        // Проверка заполненных строк
+        checkRows();
+        
+        // Новая фигура
+        currentPiece = nextPiece;
+        nextPiece = randomPiece();
+        
+        // Проверка столкновения сразу после появления новой фигуры
+        if (collision(0, 0, currentPiece.shape)) {
+            gameOver = true;
+            alert('Игра окончена! Ваш счет: ' + sscore);
+            clearInterval(gameInterval);
+            backToMenu();
+            return;
+        }
+        
+        // Сброс таймера
+        dropStart = Date.now();
+    }
+    
+    function checkRows() {
+        let rowsCleared = 0;
+        
+        for (let r = ROWS - 1; r >= 0; r--) {
+            let isRowFull = true;
+            
+            for (let c = 0; c < COLS; c++) {
+                if (board[r][c] === 0) {
+                    isRowFull = false;
+                    break;
+                }
+            }
+            
+            if (isRowFull) {
+                // Удаление строки
+                for (let y = r; y > 0; y--) {
+                    for (let c = 0; c < COLS; c++) {
+                        board[y][c] = board[y - 1][c];
+                    }
+                }
+                
+                // Очистка верхней строки
+                for (let c = 0; c < COLS; c++) {
+                    board[0][c] = 0;
+                }
+                
+                rowsCleared++;
+                r++; // Проверяем эту же строку снова
+            }
+        }
+        
+        if (rowsCleared > 0) {
+            // Обновление счета
+            updateScore(rowsCleared);
+        }
+    }
+    
+    function updateScore(linesCleared) {
+        const points = [0, 40, 100, 300, 1200]; // Очки за 0, 1, 2, 3, 4 линии
+        sscore += points[linesCleared] * level;
+        lines += linesCleared;
+        
+        // Каждые 10 линий - новый уровень (максимальная скорость 100ms)
+        const newLevel = Math.floor(lines / 10) + 1;
+        if (newLevel > level) {
+            level = newLevel;
+            clearInterval(gameInterval);
+            gameInterval = setInterval(moveDown, Math.max(100, 1000 - (level - 1) * 100));
+        }
+        
+        document.getElementById('score').textContent = sscore;
+    }
+    
+    function moveDown() {
+        if (!collision(0, 1, currentPiece.shape)) {
+            currentPiece.y++;
+            draw();
+        } else {
+            lock();
+        }
+    }
+    
+    // Обновляем функцию starame для поддержки тетриса
+    function starame(gameType) {
+        currename = gameType;
+        gamesMenu.style.display = 'none';
+        gameWrapper.style.display = 'block';
+        
+        // Очистка предыдущих обработчиков
+        document.removeEventListener('keydown', control);
+        document.removeEventListener('keydown', jump);
+        
+        if (gameType === 'cloud') {
+            initCloudGame();
+        } else if (gameType === 'tetris') {
+            initTetrisGame();
+        } else if (gameType === 'tanks') {
+            alert('Танчики скоро будут доступны!');
+        }
+    }
+</script>
 </html>
