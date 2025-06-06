@@ -4,14 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Карта сайта | SkyHouse - Магазин бытовой техники</title>
-    <link rel="stylesheet" href="style.css"> <!-- Подключаем ваш основной CSS -->
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <style>
+        /* Основная структура страницы */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
         /* Дополнительные стили для карты сайта */
         .sitemap-container {
             padding: 50px 0;
             background-color: #f9f9f9;
+            flex: 1;
         }
         
         .sitemap-grid {
@@ -47,6 +61,53 @@
         .sitemap-list a:hover {
             color: #000000;
             text-decoration: underline;
+        }
+        
+        /* Фиксированный подвал */
+        footer {
+            background-color: #000000;
+            padding: 20px 0;
+            color: white;
+            margin-top: auto;
+            position: relative;
+        }
+        
+        footer a {
+            color: #ffffff;
+        }
+        
+        footer a:hover {
+            color: #cccccc;
+        }
+        
+        /* Стиль для информации о сборке */
+        .build-info {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            font-size: 12px;
+            color: #999;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            .sitemap-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sitemap-container {
+                padding: 30px 0;
+            }
+            
+            .build-info {
+                left: 5px;
+                bottom: 5px;
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -164,6 +225,11 @@
             </div>
         </div>
     </footer>
+
+    <!-- Информация о сборке -->
+    <div class="build-info">
+        Build v1.0.0 - 2025.06.07
+    </div>
 
     <!-- Подключение скриптов как на главной странице -->
     <script src="script.js"></script>
