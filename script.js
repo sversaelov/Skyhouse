@@ -662,3 +662,35 @@ function logout() {
         <a href="#" onclick="openRegisterModal()">Регистрация</a>
     `;
 }
+
+    // Функции для работы с модальным окном условий использования
+    function openTermsModal() {
+        document.getElementById("termsModal").style.display = "block";
+    }
+    
+    function closeTermsModal() {
+        document.getElementById("termsModal").style.display = "none";
+    }
+    
+    // Обновляем обработчик ссылки в подвале
+    document.querySelector('a[href="terms.html"]').onclick = function(e) {
+        e.preventDefault();
+        openTermsModal();
+    };
+    
+    // Закрытие при клике вне окна
+    window.onclick = function(event) {
+        if (event.target == document.getElementById("termsModal")) {
+            closeTermsModal();
+        }
+    };
+// Обработчик для ссылки "Условия использования"
+document.querySelector('a[href="terms.html"]').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('termsModal').style.display = 'block';
+});
+
+// Закрытие модального окна условий использования
+document.querySelector('#termsModal .close').addEventListener('click', function() {
+    document.getElementById('termsModal').style.display = 'none';
+});

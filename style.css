@@ -1943,3 +1943,221 @@ button:hover {
             border-radius: 3px;
             z-index: 1000;
         }
+
+/* Общие стили для раздела */
+.delivery-payment {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
+
+.delivery-payment .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Стили заголовка раздела */
+.delivery-payment .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.delivery-payment .section-title {
+    font-size: 36px;
+    color: #000000;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.delivery-payment .section-divider {
+    width: 80px;
+    height: 3px;
+    background: #000000;
+    margin: 0 auto 20px;
+}
+
+.delivery-payment .section-subtitle {
+    font-size: 18px;
+    color: #000000;
+    margin-bottom: 30px;
+}
+
+/* Стили для контента доставки и оплаты */
+.delivery-payment-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.delivery-info, .payment-info {
+    width: 48%;
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.delivery-info h3, .payment-info h3 {
+    font-size: 24px;
+    color: #000000;
+    margin-bottom: 25px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.delivery-info h3:after, .payment-info h3:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: #000000;
+}
+
+/* Стили для методов доставки и оплаты */
+.delivery-methods, .payment-methods {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.delivery-method, .payment-method {
+    width: 100%;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+}
+
+.delivery-method:hover, .payment-method:hover {
+    transform: translateY(-5px);
+}
+
+.delivery-method i, .payment-method i {
+    font-size: 28px;
+    color: #000000;
+    margin-right: 20px;
+    min-width: 40px;
+    text-align: center;
+    padding-top: 5px;
+}
+
+.method-content {
+    flex: 1;
+}
+
+.delivery-method h4, .payment-method h4 {
+    font-size: 18px;
+    color: #000000;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.delivery-method p, .payment-method p {
+    font-size: 15px;
+    color: #000000;
+    line-height: 1.6;
+}
+
+/* Стили для условий доставки */
+.delivery-terms {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.delivery-terms h3 {
+    font-size: 24px;
+    color: #000000;
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.delivery-terms h3:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: #000000;
+}
+
+.delivery-terms ul {
+    list-style: none;
+    padding: 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.delivery-terms li {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #000000;
+    line-height: 1.6;
+}
+
+.delivery-terms li:before {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #27ae60;
+    position: absolute;
+    left: 0;
+    top: 2px;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .delivery-info, .payment-info {
+        width: 100%;
+    }
+    
+    .delivery-method, .payment-method {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .delivery-payment {
+        padding: 40px 0;
+    }
+    
+    .delivery-payment .section-title {
+        font-size: 30px;
+    }
+    
+    .delivery-info h3, .payment-info h3, .delivery-terms h3 {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 576px) {
+    .delivery-payment .section-title {
+        font-size: 26px;
+    }
+    
+    .delivery-method, .payment-method {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .delivery-method i, .payment-method i {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+}
+
+   
