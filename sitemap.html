@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта сайта | SkyHouse - Магазин бытовой техники</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        /* Основная структура страницы */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* Дополнительные стили для карты сайта */
+        .sitemap-container {
+            padding: 50px 0;
+            background-color: #f9f9f9;
+            flex: 1;
+        }
+        
+        .sitemap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .sitemap-column h3 {
+            color: #000000;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .sitemap-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sitemap-list li {
+            margin-bottom: 12px;
+        }
+        
+        .sitemap-list a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 15px;
+        }
+        
+        .sitemap-list a:hover {
+            color: #000000;
+            text-decoration: underline;
+        }
+        
+        /* Фиксированный подвал */
+        footer {
+            background-color: #000000;
+            padding: 20px 0;
+            color: white;
+            margin-top: auto;
+            position: relative;
+        }
+        
+        footer a {
+            color: #ffffff;
+        }
+        
+        footer a:hover {
+            color: #cccccc;
+        }
+        
+        /* Стиль для информации о сборке */
+        .build-info {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            font-size: 12px;
+            color: #999;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            .sitemap-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sitemap-container {
+                padding: 30px 0;
+            }
+            
+            .build-info {
+                left: 5px;
+                bottom: 5px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка как на главной странице -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="/">SkyHouse</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="catalog.html">Каталог</a></li>
+                    <li><a href="about.html">О нас</a></li>
+                    <li><a href="delivery.html">Доставка и оплата</a></li>
+                    <li><a href="contacts.html">Контакты</a></li>
+                </ul>
+            </nav>
+            <div class="header-right">
+                <div class="auth">
+                    <a href="#" onclick="openLoginModal()">Вход</a>
+                    <a href="#" onclick="openRegisterModal()">Регистрация</a>
+                </div>
+                <div class="search">
+                    <input type="text" placeholder="Поиск...">
+                    <button>Найти</button>
+                </div>
+                <div class="cart-icon" onclick="openCartModal()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cart-item-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основное содержимое карты сайта -->
+    <main class="sitemap-container">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Карта сайта</h2>
+                <div class="section-divider"></div>
+                <p class="section-subtitle">Все разделы интернет-магазина SkyHouse</p>
+            </div>
+            
+            <div class="sitemap-grid">
+                <!-- Колонка 1: Основные страницы -->
+                <div class="sitemap-column">
+                    <h3>Основные разделы</h3>
+                    <ul class="sitemap-list">
+                        <li><a href="/">Главная страница</a></li>
+                        <li><a href="catalog.html">Каталог товаров</a></li>
+                        <li><a href="about.html">О компании</a></li>
+                        <li><a href="delivery.html">Доставка и оплата</a></li>
+                        <li><a href="contacts.html">Контакты</a></li>
+                        <li><a href="sitemap.html">Карта сайта</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Колонка 2: Категории товаров -->
+                <div class="sitemap-column">
+                    <h3>Категории товаров</h3>
+                    <ul class="sitemap-list">
+                        <li><a href="catalog.html?category=refrigerators">Холодильники</a></li>
+                        <li><a href="catalog.html?category=washing_machines">Стиральные машины</a></li>
+                        <li><a href="catalog.html?category=televisions">Телевизоры</a></li>
+                        <li><a href="catalog.html?category=laptops">Ноутбуки</a></li>
+                        <li><a href="catalog.html?category=smartphones">Смартфоны</a></li>
+                        <li><a href="catalog.html?category=appliances">Мелкая бытовая техника</a></li>
+                    </ul>
+                </div>
+                
+                
+                
+                <!-- Колонка 3: Юридическая информация -->
+                <div class="sitemap-column">
+                    <h3>Юридическая информация</h3>
+                    <ul class="sitemap-list">
+                        <li><a href="terms.html">Пользовательское соглашение</a></li>
+                        <li><a href="privacy.html">Политика конфиденциальности</a></li>
+                        <li><a href="cookie.html">Использование cookies</a></li>
+                        <li><a href="oferta.html">Публичная оферта</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал как на главной странице -->
+    <footer>
+        <div class="container">
+            <div class="footer-info">
+                <p>&copy; 2025 SkyHouse. Все права защищены.</p>
+                <p>Служба поддержки: <a href="mailto:support@SkyHouse.ru">support@SkyHouse.ru</a></p>
+                <p>Телефон: <a href="tel:+74951234567">+7 (495) 123-45-67</a></p>
+            </div>
+            <div class="footer-links">
+                <a href="terms.html">Условия использования</a> |
+                <a href="privacy.html">Политика конфиденциальности</a> |
+                <a href="sitemap.html">Карта сайта</a>
+            </div>
+            <div class="social-icons">
+                <a href="https://t.me/+165OTN2sXiw2NzNi" target="_blank"><img src="images/tg.png" alt="Telegram"></a>
+                <a href="https://vk.com/club230780968" target="_blank"><img src="images/vk.jpg" alt="VK"></a>
+                <a href="https://chat.whatsapp.com/E7eZco3vlej7R0Zr6gHEP4" target="_blank"><img src="images/wt.png" alt="Whatsapp"></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Информация о сборке -->
+    <div class="build-info">
+        Build v1.0.0 - 2025.06.07
+    </div>
+     <script src="script.js"></script>
+</html>
