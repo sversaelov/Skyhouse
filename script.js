@@ -902,3 +902,214 @@ window.onclick = function(event) {
         closeTermsModal();
     }
 };
+// скрипты каталога
+//_______________________________________________________________________________________
+//_______________________________________________________________________________________
+       // Глобальная переменная для хранения корзины
+
+// Функция добавления товара в корзину
+function addToCart(productId) {
+    // Находим товар по ID (в реальном приложении это будет запрос к серверу)
+    const products = [
+        {
+            id: 1,
+            name: 'Телевизор Samsung QE55Q70TAU',
+            price: 64990,
+            image: 'images/products/tv1.jpg'
+        },
+        {
+            id: 2,
+            name: 'Холодильник LG GA-B509SLGL',
+            price: 58990,
+            image: 'images/products/fridge1.jpg'
+        },
+        {
+            id: 3,
+            name: 'Смартфон iPhone 13 128GB',
+            price: 79990,
+            image: 'images/products/phone1.jpg'
+        },
+        {
+            id: 4,
+            name: 'Ноутбук ASUS VivoBook 15',
+            price: 49990,
+            image: 'images/products/laptop1.jpg'
+        },
+        {
+            id: 5,
+            name: 'Стиральная машина Bosch WAT28441',
+            price: 42990,
+            image: 'images/products/washer1.jpg'
+        },
+        {
+            id: 6,
+            name: 'Пылесос Dyson V11 Absolute',
+            price: 54990,
+            image: 'images/products/vacuum1.jpg'
+        },
+        {
+            id: 7,
+            name: 'Наушники Sony WH-1000XM4',
+            price: 29990,
+            image: 'images/products/headphones1.jpg'
+        },
+        {
+            id: 8,
+            name: 'Кофемашина DeLonghi Magnifica S',
+            price: 44990,
+            image: 'images/products/coffee1.jpg'
+        },
+        {
+            id: 9,
+            name: 'Кондиционер Ballu BSVP-07HN1',
+            price: 32990,
+            image: 'images/products/ac1.jpg'
+        }
+    ];
+    
+    const productToAdd = products.find(p => p.id === productId);
+    
+    if (!productToAdd) {
+        console.error('Товар не найден');
+        return;
+    }
+    
+    // Проверяем, есть ли уже такой товар в корзине
+    const existingItem = cart.find(item => item.id === productId);
+    
+    if (existingItem) {
+        // Если товар уже есть в корзине, увеличиваем количество
+        existingItem.quantity += 1;
+    } else {
+        // Если товара нет в корзине, добавляем его
+        cart.push({
+            ...productToAdd,
+            quantity: 1
+        });
+    }
+    
+    // Обновляем отображение корзины
+    updateCart();
+    
+    // Показываем уведомление
+    showCartNotification(productToAdd.name);
+    
+    console.log('Товар добавлен в корзину:', productToAdd);
+}
+
+// Функция обновления корзины в UI
+function updateCart() {
+    // Обновляем счетчик товаров в корзине
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById('cart-item-count').textContent = totalItems;
+    
+    // Обновляем содержимое модального окна корзины
+    const cartContainer = document.getElementById('cart-items-container');
+    const cartTotal = document.getElementById('cart-total-price');
+    
+    if (cart.length === 0) {
+        cartContainer.innerHTML = '<p>Ваша корзина пуста.</p>';
+        cartTotal.textContent = '0';
+        document.getElementById('checkout-btn').style.display = 'none';
+        return;
+    }
+    
+    // Генерируем HTML для каждого товара в корзине
+    let cartHTML = '';
+    let totalPrice = 0;
+    
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        totalPrice += itemTotal;
+        
+        cartHTML += `
+            <div class="cart-item" data-id="${item.id}">
+                <div class="cart-item-image">
+                    <img src="${item.image}" alt="${item.name}">
+                </div>
+                <div class="cart-item-info">
+                    <h4 class="cart-item-title">${item.name}</h4>
+                    <div class="cart-item-price">${item.price.toLocaleString()} ₽ × ${item.quantity} = ${itemTotal.toLocaleString()} ₽</div>
+                    <div class="cart-item-controls">
+                        <button class="quantity-btn minus" onclick="changeQuantity(${item.id}, -1)">-</button>
+                        <span class="quantity">${item.quantity}</span>
+                        <button class="quantity-btn plus" onclick="changeQuantity(${item.id}, 1)">+</button>
+                        <button class="remove-btn" onclick="removeFromCart(${item.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    cartContainer.innerHTML = cartHTML;
+    cartTotal.textContent = totalPrice.toLocaleString();
+    
+    // Показываем кнопку оформления заказа
+    document.getElementById('checkout-btn').style.display = 'block';
+}
+
+// Функция изменения количества товара
+function changeQuantity(productId, change) {
+    const item = cart.find(item => item.id === productId);
+    
+    if (!item) return;
+    
+    item.quantity += change;
+    
+    // Если количество стало 0 или меньше, удаляем товар из корзины
+    if (item.quantity <= 0) {
+        cart = cart.filter(item => item.id !== productId);
+    }
+    
+    updateCart();
+}
+
+// Функция удаления товара из корзины
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    updateCart();
+}
+
+// Функция показа уведомления о добавлении в корзину
+function showCartNotification(productName) {
+    // Создаем элемент уведомления
+    const notification = document.createElement('div');
+    notification.className = 'cart-notification';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>Товар "${productName}" добавлен в корзину</span>
+    `;
+    
+    // Добавляем уведомление на страницу
+    document.body.appendChild(notification);
+    
+    // Показываем уведомление
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Через 3 секунды скрываем и удаляем уведомление
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Инициализация корзины при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Можно загрузить корзину из localStorage, если нужно сохранять между сессиями
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCart();
+    }
+    
+    // Сохраняем корзину в localStorage при изменении
+    window.addEventListener('beforeunload', function() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    });
+});
