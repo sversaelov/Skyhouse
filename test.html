@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест загрузки данных - SkyHouse</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .controls {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #status {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .loading {
+            background: #fff8e1;
+            color: #ff8f00;
+        }
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .json-viewer {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Тест загрузки данных из Google Sheets</h1>
+        
+        <div class="controls">
+            <button id="loadDataBtn">Загрузить данные</button>
+            <button id="clearDataBtn">Очистить</button>
+        </div>
+        
+        <div id="status">Нажмите "Загрузить данные" для начала теста</div>
+        
+        <div id="dataContainer">
+            <!-- Здесь будут отображаться данные -->
+        </div>
+        
+        <div class="json-viewer">
+            <h3>Raw JSON Data:</h3>
+            <pre id="jsonData"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadDataBtn = document.getElementById('loadDataBtn');
+            const clearDataBtn = document.getElementById('clearDataBtn');
+            const statusDiv = document.getElementById('status');
+            const dataContainer = document.getElementById('dataContainer');
+            const jsonDataPre = document.getElementById('jsonData');
+            
+            // Конфигурация Google Sheets
+            const SPREADSHEET_ID = '1wUYcwESk90A8HcYUuQgoCkWhD4UJZqaz30m5IuT9s2Q';
+            const API_KEY = 'AIzaSyBVFva3YsJb2Q5rVK8nQ-vub1pscVW7bDA';
+            const SHEET_NAME = 'catalog';
+            
+            loadDataBtn.addEventListener('click', async function() {
+                try {
+                    statusDiv.textContent = 'Загрузка данных...';
+                    statusDiv.className = 'loading';
+                    
+                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+                    console.log('Запрос к API:', url);
+                    
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Ошибка HTTP: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Данные получены:', data);
+                    
+                    if (!data.values || data.values.length < 2) {
+                        throw new Error('Таблица пуста или содержит только заголовки');
+                    }
+                    
+                    // Обработка данных
+                    const headers = data.values[0].map(h => h.toLowerCase());
+                    const products = data.values.slice(1).map((row, index) => {
+                        const product = {};
+                        headers.forEach((header, i) => {
+                            product[header] = row[i];
+                        });
+                        
+                        // Преобразование типов данных
+                        product.price = parseFloat(product.price) || 0;
+                        product.rating = parseFloat(product.rating) || 0;
+                        product.reviews = parseInt(product.reviews) || 0;
+                        product.instock = product.instock === 'true' || product.instock === '1';
+                        
+                        // Добавляем id, если его нет
+                        product.id = product.id || `prod_${index}`;
+                        
+                        return product;
+                    });
+                    
+                    // Отображение данных
+                    displayData(products);
+                    
+                    statusDiv.textContent = `Успешно загружено ${products.length} товаров`;
+                    statusDiv.className = 'success';
+                    
+                    // Отображаем сырые JSON данные
+                    jsonDataPre.textContent = JSON.stringify(data, null, 2);
+                    
+                } catch (error) {
+                    console.error('Ошибка загрузки данных:', error);
+                    statusDiv.textContent = `Ошибка: ${error.message}`;
+                    statusDiv.className = 'error';
+                    dataContainer.innerHTML = `<p class="error">${error.message}</p>`;
+                }
+            });
+            
+            clearDataBtn.addEventListener('click', function() {
+                dataContainer.innerHTML = '';
+                jsonDataPre.textContent = '';
+                statusDiv.textContent = 'Данные очищены';
+                statusDiv.className = '';
+            });
+            
+            function displayData(products) {
+                if (products.length === 0) {
+                    dataContainer.innerHTML = '<p>Нет данных для отображения</p>';
+                    return;
+                }
+                
+                // Создаем таблицу
+                let html = '<table>';
+                
+                // Заголовки таблицы
+                html += '<tr>';
+                for (const key in products[0]) {
+                    html += `<th>${key}</th>`;
+                }
+                html += '</tr>';
+                
+                // Данные товаров
+                products.forEach(product => {
+                    html += '<tr>';
+                    for (const key in product) {
+                        let value = product[key];
+                        
+                        // Форматирование специальных типов
+                        if (key === 'price') {
+                            value = value.toFixed(2) + ' ₽';
+                        } else if (key === 'instock') {
+                            value = value ? '✓ В наличии' : '✗ Нет в наличии';
+                        } else if (key === 'image' && value) {
+                            value = `<img src="${value}" alt="Изображение" style="max-width: 100px; max-height: 60px;">`;
+                        }
+                        
+                        html += `<td>${value}</td>`;
+                    }
+                    html += '</tr>';
+                });
+                
+                html += '</table>';
+                dataContainer.innerHTML = html;
+            }
+        });
+    </script>
+</body>
+</html>
